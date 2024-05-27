@@ -361,31 +361,8 @@ void OverlayManager::drawPNG(const char* filename, int posX, int posY) {
     unsigned width, height;
 
     // Decode the PNG
-    unsigned error = lodepng::decode(image, width, height, filename);
-
-    // Check for errors
-    if(error) {
-        std::cerr << "Error decoding PNG: " << lodepng_error_text(error) << std::endl;
-        return;
-    }
-
-    // Draw the image
-    for(unsigned y = 0; y < height; ++y) {
-        for(unsigned x = 0; x < width; ++x) {
-            if(posX + x < SCREEN_WIDTH && posY + y < SCREEN_HEIGHT) {
-                unsigned idx = 4 * (y * width + x);
-                uint8_t r = image[idx];
-                uint8_t g = image[idx + 1];
-                uint8_t b = image[idx + 2];
-                uint8_t a = image[idx + 3];
-
-                uint16_t color = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3); // Convert to RGB565
-
-                colorBuffer.buffer[(posY + y) * SCREEN_WIDTH + (posX + x)] = color;
-                transparencyBuffer.buffer[(posY + y) * SCREEN_WIDTH + (posX + x)] = a; // Inverse alpha for transparency
-            }
-        }
-    }
+    lodepng::decode(image, width, height, filename);
+	drawPNG(filename, posX, posY, width, height);
 }
 
 void OverlayManager::drawPNG(const char* filename, int posX, int posY, int targetWidth, int targetHeight) {
@@ -413,11 +390,41 @@ void OverlayManager::drawPNG(const char* filename, int posX, int posY, int targe
                 uint8_t g = image[idx + 1];
                 uint8_t b = image[idx + 2];
                 uint8_t a = image[idx + 3];
+				
+				if (a != 0) { // 0 means fully transparent
+					uint16_t newColor = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3); // Convert to RGB565
+					uint16_t existingColor = colorBuffer.buffer[(posY + y) * SCREEN_WIDTH + (posX + x)];
 
-                uint16_t color = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3); // Convert to RGB565
+					if (a == 255) { // Fully opaque, directly copy the color
+						colorBuffer.buffer[(posY + y) * SCREEN_WIDTH + (posX + x)] = newColor;
+						transparencyBuffer.buffer[(posY + y) * SCREEN_WIDTH + (posX + x)] = 255;
+					} else {
+						// Decompose colors into RGB components
+						uint16_t existingRed = (existingColor >> 11) & 0x1F;
+						uint16_t existingGreen = (existingColor >> 5) & 0x3F;
+						uint16_t existingBlue = existingColor & 0x1F;
+						uint8_t  existingAlpha = transparencyBuffer.buffer[(posY + y) * SCREEN_WIDTH + (posX + x)];
 
-                colorBuffer.buffer[(posY + y) * SCREEN_WIDTH + (posX + x)] = color;
-                transparencyBuffer.buffer[(posY + y) * SCREEN_WIDTH + (posX + x)] = a; // Inverse alpha for transparency
+						uint16_t newRed = (newColor >> 11) & 0x1F;
+						uint16_t newGreen = (newColor >> 5) & 0x3F;
+						uint16_t newBlue = newColor & 0x1F;
+
+						// Blend the colors using integer arithmetic
+						uint16_t finalRed = ((newRed * a) + (existingRed * (255 - existingAlpha))) >> 8;
+						uint16_t finalGreen = ((newGreen * a) + (existingGreen * (255 - existingAlpha))) >> 8;
+						uint16_t finalBlue = ((newBlue * a) + (existingBlue * (255 - existingAlpha))) >> 8;
+					
+						uint16_t calcAlpha = transparencyBuffer.buffer[(posY + y) * SCREEN_WIDTH + (posX + x)] + a;
+						uint8_t  finalAlpha = calcAlpha > 255 ? 255 : calcAlpha;
+
+						// Recompose the final color
+						uint16_t finalColor = (finalRed << 11) | (finalGreen << 5) | (finalBlue);
+
+						// Write the blended color back to the framebuffer
+						colorBuffer.buffer[(posY + y) * SCREEN_WIDTH + (posX + x)] = finalColor;
+						transparencyBuffer.buffer[(posY + y) * SCREEN_WIDTH + (posX + x)] = finalAlpha;
+					}
+				}
             }
         }
     }
