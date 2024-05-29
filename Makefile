@@ -8,10 +8,10 @@ CXXFLAGS = -std=c++11 -Wall
 LIBS = -ludev -levdev -lpthread
 
 # Source files
-SRCS = main.cpp controller.cpp overlay.cpp lodepng.cpp
+SRCS = main.cpp controller.cpp overlay.cpp lodepng.cpp monitor.cpp pico_monitor.cpp gpio_monitor.cpp properties.cpp GPIO.cpp
 
 # Header files
-HDRS = controller.h overlay.h font5x7.h lodepng.h shared_memory.h
+HDRS = controller.h overlay.h font5x7.h lodepng.h shared_memory.h monitor.h pico_monitor.h gpio_monitor.h properties.h GPIO.h
 
 # Output executable
 TARGET = joystick_emulator

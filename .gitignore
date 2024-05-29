@@ -33,3 +33,5 @@
 
 lodepng.h
 lodepng.cpp
+
+config.prop
