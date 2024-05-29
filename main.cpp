@@ -700,52 +700,52 @@ bool configureGPIOMonitor(Properties* config){
 	if(dpad){
 		std::cout << "\33[2K\rHold Up: " << std::flush;
 		int pin = getHeldPin(pins);
-		config->setInt("BUTTON_UP", pin);
+		config->setInt("PIN_UP", pin);
 		
 		std::cout << "\33[2K\rHold Down: " << std::flush;
 		pin = getHeldPin(pins);
-		config->setInt("BUTTON_DOWN", pin);
+		config->setInt("PIN_DOWN", pin);
 		
 		std::cout << "\33[2K\rHold Left: " << std::flush;
 		pin = getHeldPin(pins);
-		config->setInt("BUTTON_LEFT", pin);
+		config->setInt("PIN_LEFT", pin);
 		
 		std::cout << "\33[2K\rHold Right: " << std::flush;
 		pin = getHeldPin(pins);
-		config->setInt("BUTTON_RIGHT", pin);
+		config->setInt("PIN_RIGHT", pin);
 	}
 	
 	std::cout << "\33[2K\rHold A: " << std::flush;
 	int pin = getHeldPin(pins);
-	config->setInt("BUTTON_A", pin);
+	config->setInt("PIN_A", pin);
 	
 	std::cout << "\33[2K\rHold B: " << std::flush;
 	pin = getHeldPin(pins);
-	config->setInt("BUTTON_B", pin);
+	config->setInt("PIN_B", pin);
 	
 	std::cout << "\33[2K\rHold X: " << std::flush;
 	pin = getHeldPin(pins);
-	config->setInt("BUTTON_X", pin);
+	config->setInt("PIN_X", pin);
 	
 	std::cout << "\33[2K\rHold Y: " << std::flush;
 	pin = getHeldPin(pins);
-	config->setInt("BUTTON_Y", pin);
+	config->setInt("PIN_Y", pin);
 	
 	std::cout << "\33[2K\rHold R: " << std::flush;
 	pin = getHeldPin(pins);
-	config->setInt("BUTTON_R", pin);
+	config->setInt("PIN_R", pin);
 	
 	std::cout << "\33[2K\rHold L: " << std::flush;
 	pin = getHeldPin(pins);
-	config->setInt("BUTTON_L", pin);
+	config->setInt("PIN_L", pin);
 	
 	std::cout << "\33[2K\rHold Start: " << std::flush;
 	pin = getHeldPin(pins);
-	config->setInt("BUTTON_START", pin);
+	config->setInt("PIN_START", pin);
 	
 	std::cout << "\33[2K\rHold Select: " << std::flush;
 	pin = getHeldPin(pins);
-	config->setInt("BUTTON_SELECT", pin);
+	config->setInt("PIN_SELECT", pin);
 	
 	
 	config->flush();
