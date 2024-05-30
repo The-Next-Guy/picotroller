@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cstdio>
 #include <thread>
-#include "controller.h"
 #include <fcntl.h>
 #include <unistd.h>
 #include <libgen.h>
@@ -12,6 +11,7 @@
 #include "overlay.h"
 #include "pico_monitor.h"
 #include "gpio_monitor.h"
+#include "controller.h"
 #include "GPIO.h"
 #include "properties.h"
 
@@ -850,7 +850,7 @@ int main(int argc, char* argv[]) {
     std::cout << "Xemplar PicoTroller v" << VERSION << std::endl;
 	
 	Properties config;
-	config.load("config.prop");
+	config.load(getLocalFile("config.prop"));
 	config.addWhenMissing(true);
 	audDevice               = config.get("audioDevice", ""); //Could be PCM, Headphone, or maybe something else
 	bool initialized        = config.getBool("initialized", false);
